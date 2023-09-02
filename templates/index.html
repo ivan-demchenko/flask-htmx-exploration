@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask and htmx TODO app</title>
+</head>
+<body>
+  <form action="/add-todo" method="POST"
+    hx-post="/add-todo"
+    hx-trigger="submit"
+    hx-target="#todo-items"
+    hx-on::after-request="this.reset()"
+  >
+    <input name="todo-name" placeholder="Buy some milk" />
+    <button type="submit">Add</button>
+    <button type="reset">Cancel</button>
+  </form>
+  <section id="todo-items" hx-get="/todos" hx-trigger="load"></section>
+  <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+</body>
+</html>

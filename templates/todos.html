@@ -1,0 +1,10 @@
+<ul>
+  {% for todo in todos %}
+    <li>
+      <label hx-put="/toggle-todo/{{loop.index0}}" hx-target="#todo-items" hx-trigger="click">
+        <input type="checkbox"{% if todo.done %} checked="checked"{% endif %}>
+        {{ todo.todo }}
+      </label>
+    </li>
+  {% endfor %}
+</ul>
