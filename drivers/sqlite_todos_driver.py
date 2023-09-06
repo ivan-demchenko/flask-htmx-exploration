@@ -5,17 +5,18 @@ from models.todo import Todo
 class SqliteTodosDriver:
     db = None
 
-    def __init__(self):
-        self.db = sqlite3.connect("./db/todos.db")
+    def __init__(self, filePath: str):
+        self.db = sqlite3.connect(filePath)
         self.db.execute(
-            """CREATE TABLE IF NOT EXISTS "todos" (
-              "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-              "todo" TEXT,
-              "done" BOOLEAN NOT NULL CHECK ("done" IN (0, 1))
-            )"""
+            '''CREATE TABLE IF NOT EXISTS todos (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              todo TEXT,
+              done BOOLEAN NOT NULL CHECK (done IN (0, 1))
+            )'''
         )
 
     def dispose(self):
+        print("Disposing DB")
         self.db.close()
 
     def addTodo(self, todo: str) -> None:
