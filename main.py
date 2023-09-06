@@ -1,23 +1,28 @@
-from flask import Flask, render_template, request
-from todosService import TodoService
+from flask import Flask, render_template, request, abort
+from services.todos import TodoService
+from drivers.sqlite_todos_driver import SqliteTodosDriver
+from controller import TodoController
 
 app = Flask(__name__)
-todoService = TodoService()
+todoService = TodoService(SqliteTodosDriver())
+controller = TodoController(todoService)
+
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+    return controller.index()
+
 
 @app.route('/todos')
 def todos():
-  return render_template('todos.html', todos=todoService.getAll())
+    return controller.getTodos()
 
-@app.route('/add-todo', methods=['POST'])
+
+@app.route('/todos', methods=['POST'])
 def addTodo():
-  todoName = request.form['todo-name']
-  return render_template('todos.html', todos=todoService.addTodo(todoName))
+    return controller.addTodo()
 
-@app.route('/toggle-todo/<int:todo_id>', methods=['PUT'])
-def toggleTodo(todo_id: int):
-  updatedTodos = todoService.toggleTodo(todo_id)
-  return render_template('todos.html', todos=updatedTodos)
+
+@app.route('/todos/toggle/:todo_id', methods=['PUT'])
+def toggleTodo(todo_id):
+    return controller.toggleTodo(todo_id)
