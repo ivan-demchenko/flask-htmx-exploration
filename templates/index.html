@@ -7,7 +7,7 @@
 </head>
 <body>
   <form action="/todos" method="POST"
-    hx-post="/add-todo"
+    hx-post="/todos"
     hx-trigger="submit"
     hx-target="#todo-items"
     hx-on::after-request="this.reset()"
