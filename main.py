@@ -1,35 +1,18 @@
-import signal
-import atexit
-import sys
+import os
 from flask import Flask
 from services.todos import TodoService
-from drivers.sqlite_todos_driver import SqliteTodosDriver
+from drivers.sqlite_todos_driver import SqliteTodosDriver, close_db
 from drivers.inmemory_todos_driver import InmemoryTodosDriver
 from controller import TodoController
 
-app = Flask(__name__)
-# storageDriver = SqliteTodosDriver("./db/todos.sqlite")
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Learn how make threads to share the db connection
-storageDriver = InmemoryTodosDriver()
+app = Flask(__name__)
+app.teardown_appcontext(close_db)
+storageDriver = SqliteTodosDriver(os.path.join(basedir, 'db', 'todos.sqlite'))
+# storageDriver = InmemoryTodosDriver()
 todoService = TodoService(storageDriver)
 controller = TodoController(todoService)
-
-
-def exit_handler():
-    print("Cleaning up")
-    storageDriver.dispose()
-
-
-def kill_handler(*args):
-    storageDriver.dispose()
-    sys.exit(0)
-
-
-atexit.register(exit_handler)
-signal.signal(signal.SIGINT, kill_handler)
-signal.signal(signal.SIGTERM, kill_handler)
-
 
 @app.route('/')
 def index():
